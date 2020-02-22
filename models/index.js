@@ -12,4 +12,6 @@ mongoose.connect(DB_URI, {
 
   module.exports = {
     City: require('./City.js'),
+    Post: require('./Post'), // ALL FILES ARE ASSUMED TO BE JS UNLESS OTHERWISE STATED
+    User: require('./User'),
   };
