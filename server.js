@@ -1,10 +1,12 @@
+// SERVER SIDE JAVSCRIPT (Node.js with Express.js)
+
 // Core Node Modules
 // 3rd Party NPM Modules
 // Custom Modules
 // Variables
 
-const express = require('express');
-const bodyParser = require('body-parser');
+const express = require('express'); // The write less, do more library for Node
+const bodyParser = require('body-parser'); // Parses data out of the request object and puts it in the "body" property
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -45,14 +47,16 @@ app.get('/api/v1/cities', (req, res) => {
 
 // GET City Show
 app.get('/api/v1/cities/:id', (req, res) => {
-  const city = {name: 'San Francisco'};
+  db.City.findById(req.params.id, (err, foundCity) => {
+    if (err) return res.status(400).json({status: 400, error: 'Something went wrong, please try again'});
 
-  res.json(city);
+    res.json(foundCity);
+  });
 });
 
 // POST City Create
 app.post('/api/v1/cities', (req, res) => {
-  console.log(req.body);
+  console.log(req.body); // Without body-parser, body will be undefined
 
   db.City.create(req.body, (err, newCity) => {
     if (err) return res.json(err);
@@ -63,12 +67,24 @@ app.post('/api/v1/cities', (req, res) => {
 
 // PUT City Update
 app.put('/api/v1/cities/:id', (req, res) => {
-  res.sendStatus(200) // 200 = Success/OK
+  // res.sendStatus(200) // 200 = Success/OK
+
+  db.City.findByIdAndUpdate(req.params.id, req.body, {new: true}, (err, updatedCity) => {
+    if (err) return res.status(400).json({status: 400, error: 'Something went wrong, please try again'});
+
+    res.json(updatedCity);
+  });
 });
 
 // DELETE City Destroy
 app.delete('/api/v1/cities/:id', (req, res) => {
-  res.sendStatus(200);
+  // res.sendStatus(200);
+
+  db.City.findByIdAndDelete(req.params.id, (err, deletedCity) => {
+    if (err) return res.status(400).json({status: 400, error: 'Something went wrong, please try again'});
+
+    res.json(deletedCity);
+  });
 });
 
 
@@ -86,15 +102,20 @@ app.get('/api/v1/posts', (req, res) => {
 
 // POST Posts Create
 app.post('/api/v1/cities/:cityId/posts', (req, res) => {
-  req.body.user = '5e50591be93d252e5c217f25';
+  req.body.user = '5e50591be93d252e5c217f25'; // Temp user association for testing
+
+  // First create a Post, Then Associate it with a City
   db.Post.create(req.body, (err, newPost) => {
     if (err) return res.status(400).json({status: 400, error: 'Something went wrong, please try again'});
 
+    // We use the City ID in the request params to find which City the Post should be embedded in
     db.City.findById(req.params.cityId, (err, foundCity) => {
       if (err) return res.status(400).json({status: 400, error: 'Something went wrong, please try again'});
 
+      // Once we find the City, we can use the push() method to push the new Post into the Cities posts
       foundCity.posts.push(newPost);
 
+      // Anytime a database document is altered, it must be saved
       foundCity.save((err, savedCity) => {
         if (err) return res.status(400).json({status: 400, error: 'Something went wrong, please try again'});
 
@@ -102,8 +123,7 @@ app.post('/api/v1/cities/:cityId/posts', (req, res) => {
         res.json(newPost);
       });
 
-
-    })
+    });
   });
 });
 
