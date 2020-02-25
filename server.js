@@ -18,8 +18,28 @@ const routes = require('./routes'); // Routes Module
 
 // ------------------- MIDDLEWARE
 
+// Serve Public Assets
+app.use(express.static(__dirname + '/public'));
+
 // Init BodyParser
 app.use(bodyParser.json());
+
+// Custom Request Logger Middleware
+app.use((req, res, next) => {
+  const url = req.url;
+  const method = req.method;
+
+  // Destructuring
+  // const { url, method } = req;
+
+  const requestedAt = new Date().toLocaleTimeString();
+
+  const result = `${method} ${url} ${requestedAt}`;
+
+  console.log(result);
+
+  next();
+});
 
 // ------------------- VIEW ROUTES
 // Use() is all methods (GET, PUT, POST, DELTE, etc);
