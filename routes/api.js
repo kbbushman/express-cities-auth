@@ -17,6 +17,7 @@ router.delete('/cities/:id', ctrl.cities.destroy);
 
 router.get('/posts', ctrl.posts.index);
 router.post('/cities/:cityId/posts', ctrl.posts.create);
+router.delete('/cities/:cityId/posts/:postId', ctrl.posts.destroy);
 
 
 // -------- User Routes

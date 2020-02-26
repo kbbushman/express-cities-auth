@@ -129,6 +129,9 @@ function deletePost(event) {
     .then((stream) => stream.json())
     .then((res) => {
       console.log(res);
+      // How Update the DOM now to reflect the deleted Post?
+      // Do we have alaready have a method we can call to get the current Cities in our database
+      //    and render them in the DOM?
     })
     .catch((err) => console.log(err));
 }
