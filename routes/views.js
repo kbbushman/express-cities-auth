@@ -10,12 +10,21 @@ router.get('/', (req, res) => {
   });
 });
 
+
+
 // '/cities/new'
 router.get('/cities/new', (req, res) => {
   res.sendFile('views/cities/new.html', {
     root: __dirname + '/../',
   });
 });
+
+router.get('/cities/:id', (req, res) => {
+  res.sendFile('views/cities/show.html', {
+    root: __dirname + '/../'
+  });
+});
+
 
 // DONT FOREGET TO EXPORT THE ROUTER
 module.exports = router;
