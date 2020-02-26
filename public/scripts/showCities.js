@@ -106,6 +106,10 @@ postForm.addEventListener('submit', (event) => {
         console.log(res);
         if (res.title) {
           getCity();
+          // This is the jQuery method to close a Bootstrap modal
+          // We get access to a very slim version of jQuery when we add
+          //    the Bootstrap JS tags to our HTML file
+          // https://getbootstrap.com/docs/4.0/components/modal/#modalhide
           $('#newPostModal').modal('hide');
         }
       })
