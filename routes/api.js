@@ -22,9 +22,9 @@ router.delete('/cities/:cityId/posts/:postId', ctrl.posts.destroy);
 
 // -------- Auth Routes
 
-router.get('/register', ctrl.auth.register);
+router.post('/register', ctrl.auth.register);
 router.post('/login', ctrl.auth.login);
-router.post('/logout', ctrl.auth.login);
+router.delete('/logout', ctrl.auth.logout);
 
 
 module.exports = router;

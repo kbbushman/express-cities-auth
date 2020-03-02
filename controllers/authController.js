@@ -1,3 +1,5 @@
+// REQUIRE BCRYPTJS
+
 const db = require('../models');
 
 

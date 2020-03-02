@@ -1,17 +1,18 @@
 // SERVER SIDE JAVSCRIPT (Node.js with Express.js)
 
-// Core Node Modules
-// 3rd Party NPM Modules
-// Custom Modules
-// Variables
+// Install express-session
+// Install bcryptjs
+// Install connect-mongo
 
 const express = require('express'); // The write less, do more library for Node
 const bodyParser = require('body-parser'); // Parses data out of the request object and puts it in the "body" property
+
+// REQUIRE EXPRESS SESSION
+// REQUIRE CONNECT MONGO as MONGO STORE
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-// Init DB
-const db = require('./models'); // DB Models & Modules
 
 // Init Routes
 const routes = require('./routes'); // Routes Module
@@ -33,13 +34,17 @@ app.use((req, res, next) => {
   // const { url, method } = req;
 
   const requestedAt = new Date().toLocaleTimeString();
-
   const result = `${method} ${url} ${requestedAt}`;
-
   console.log(result);
 
   next();
 });
+
+
+
+// CONFIGURE EXPRESS SESSION
+
+
 
 // ------------------- VIEW ROUTES
 // Use() is all methods (GET, PUT, POST, DELTE, etc);
