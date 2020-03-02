@@ -20,10 +20,11 @@ router.post('/cities/:cityId/posts', ctrl.posts.create);
 router.delete('/cities/:cityId/posts/:postId', ctrl.posts.destroy);
 
 
-// -------- User Routes
+// -------- Auth Routes
 
-router.get('/users', ctrl.users.index);
-router.post('/users', ctrl.users.create);
+router.get('/register', ctrl.auth.register);
+router.post('/login', ctrl.auth.login);
+router.post('/logout', ctrl.auth.login);
 
 
 module.exports = router;
