@@ -1,5 +1,4 @@
-// REQUIRE BCRYPTJS
-
+const bcrypt = require('bcryptjs');
 const db = require('../models');
 
 
@@ -17,10 +16,37 @@ const register = (req, res) => {
 
   // Create newUser and Respond with 200
 
-  db.User.create(req.body, (err, newUser) => {
-    if (err) return res.status(400).json({status: 400, error: 'Something went wrong, please try again'});
+  // if (!req.body.email === '' || !req.body.password === '')
 
-    res.json(newUser);
+  db.User.findOne({email: req.body.email}, (err, foundUser) => {
+    if (err) return res.status(400).json({status: 400, message: 'Something went wrong, please try again'});
+
+    if (foundUser) {
+      return res.status(400).json({status: 400, message: 'Account already registerd, please login'});
+    }
+
+    // Encrypt User Password
+    // First, generate a salt
+    bcrypt.genSalt(10, (err, salt) => {
+      if (err) return res.status(400).json({status: 400, message: 'Something went wrong, please try again'});
+
+      bcrypt.hash(req.body.password, salt, (err, hash) => {
+        if (err) return res.status(400).json({status: 400, message: 'Something went wrong, please try again'});
+
+        const userData = {
+          firstName: req.body.firstName,
+          lastName: req.body.lastName,
+          email: req.body.email,
+          password: hash,
+        }
+
+        db.User.create(userData, (err, newUser) => {
+          if (err) return res.status(400).json({status: 400, message: 'Something went wrong, please try again'});
+
+          res.status(201).json({status: 201, message: 'Success'});
+        });
+      });
+    });
   });
 };
 
@@ -33,14 +59,33 @@ const login = (req, res) => {
     if (err) return res.status(400).json({status: 400, error: 'Something went wrong, please try again'});
 
     // If No User Found, Respond with 400
+    if (!foundUser) {
+      return res.status(400).json({status: 400, message: 'Invalid credentials'});
+    }
 
-    // Compare Password Sent Password and foundUser Password
+    // Hash the req.body.password (supplied password)
+    bcrypt.compare(req.body.password, foundUser.password, (err, isMatch) => {
+      if (err) return res.status(400).json({status: 400, message: 'Something went wrong, please try again'});
 
-    // If Passwords Match, Create Session and Respond with 200
+      if (isMatch) {
+        // Create a session and respond
+        const currentUser = {
+          _id: foundUser._id,
+          firstName: foundUser.firstName,
+          lastName: foundUser.lastName,
+          email: foundUser.email,
+        };
 
-    // If Passwords Do Not Match, Respond with 400
+        // Create a New Session (Key to the Kingdom)
+        req.session.currentUser = currentUser;
 
-    res.json(foundUser);
+        // Respond
+        res.status(200).json({status: 200, user: currentUser});
+      } else {
+        // Respond with error
+        res.status(401).json({status: 401, error: 'Unauthorized, please login and try again'});
+      }
+    });
   });
 };
 
@@ -48,11 +93,29 @@ const login = (req, res) => {
 // DELETE Session Destroy
 const logout = (req, res) => {
   // If There Is A Current Session, Destroy Session and Respond with 200
+  if (!req.session.currentUser) {
+    return res.status(401).json({status: 401, error: 'Unauthorized, please login and try again'});
+  }
+  
+  req.session.destroy((err) => {
+    if (err) return res.status(400).json({status: 400, message: 'Something went wrong, please try again'});
 
-  // Otherwise, Do Nothing
-  res.json({status: 200, message: 'Logout Route Sucess...'});
+    res.status(200).json({status: 200, message: 'Success'});
+  });
 };
 
+
+const verify = (req, res) => {
+  if (req.session.currentUser) {
+    return res.json({
+      status: 200,
+      message: 'Authorized',
+      currentUser: req.session.currentUser,
+    });
+  }
+
+  res.status(401).json({status: 401, error: 'Unauthorized, please login and try again'});
+};
 
 
 
@@ -60,4 +123,5 @@ module.exports = {
   register,
   login,
   logout,
+  verify,
 };

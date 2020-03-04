@@ -6,6 +6,8 @@
 
 const express = require('express'); // The write less, do more library for Node
 const bodyParser = require('body-parser'); // Parses data out of the request object and puts it in the "body" property
+const session = require('express-session');
+const MongoStore = require('connect-mongo')(session);
 
 // REQUIRE EXPRESS SESSION
 // REQUIRE CONNECT MONGO as MONGO STORE
@@ -42,7 +44,18 @@ app.use((req, res, next) => {
 
 
 
-// CONFIGURE EXPRESS SESSION
+// Express Session
+app.use(session({
+  store: new MongoStore({
+    url: process.env.MONGODB_URI || 'mongodb://localhost:27017/express-cities',
+  }),
+  secret: 'Supercalifragiliticex[eali34899849838020iljsljsojh',
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7 * 2 // Two weeks
+  }
+}));
 
 
 

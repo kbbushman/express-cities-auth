@@ -25,6 +25,7 @@ router.delete('/cities/:cityId/posts/:postId', ctrl.posts.destroy);
 router.post('/register', ctrl.auth.register);
 router.post('/login', ctrl.auth.login);
 router.delete('/logout', ctrl.auth.logout);
+router.get('/verify', ctrl.auth.verify);
 
 
 module.exports = router;

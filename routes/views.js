@@ -33,13 +33,17 @@ router.get('/cities/:id', (req, res) => {
 
 // Register Template
 router.get('/register', (req, res) => {
-
+  res.sendFile('views/auth/register.html', {
+    root: __dirname + '/../'
+  });
 });
 
 
 // Login Template
 router.get('/login', (req, res) => {
- 
+  res.sendFile('views/auth/login.html', {
+    root: __dirname + '/../'
+  });
 });
 
 
